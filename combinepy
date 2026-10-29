@@ -1,0 +1,34 @@
+#!/bin/bash
+
+out="all_questions.py"
+files=()
+
+for file in *.py; do
+    if [[ "$file" =~ ^[0-9]+\.py$ ]] && [[ -f "$file" ]]; then
+        files[${#files[@]}]="$file"
+    fi
+done
+
+if [[ ${#files[@]} -eq 0 ]]; then
+    echo "No numbered Python files found in $(pwd)"
+    exit 1
+fi
+
+# Sort filenames numerically (1.py, 2.py, 10.py)
+sorted_files=$(printf '%s\n' "${files[@]}" | sort -V)
+
+# Build the combined file
+{
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
+
+        printf '\n# ========================================\n'
+        printf '# QUESTION %s\n' "${file%.py}"
+        printf '# ========================================\n'
+        printf '\n'
+        cat "$file"
+        printf '\n'
+    done <<< "$sorted_files"
+} > "$out"
+
+echo "Combined ${#files[@]} files into $(pwd)/$out"
