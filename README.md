@@ -5,7 +5,5 @@ example
 1.py
 2.py
 3.py
- |
- |
-\-/
+-->
 all_questions.py
